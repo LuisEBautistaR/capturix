@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{04C33CA1-1897-44FD-A023-7417CE24E876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capturix.Core", "src\Capturix.Core\Capturix.Core.csproj", "{160791DA-D78A-41B0-9854-36951959F9C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capturix.Capture", "src\Capturix.Capture\Capturix.Capture.csproj", "{3FA5EAB4-AACE-4C35-8861-2A7FE316ECDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capturix.Editor", "src\Capturix.Editor\Capturix.Editor.csproj", "{8922D8DD-FF48-4DEF-8744-3D6BC7D45C03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capturix.Common", "src\Capturix.Common\Capturix.Common.csproj", "{9058A3DC-0CF8-43A7-852E-D798762406ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capturix.Ocr", "src\Capturix.Ocr\Capturix.Ocr.csproj", "{E2C30F70-AA21-4AA0-8D32-AC3C5CC02426}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{160791DA-D78A-41B0-9854-36951959F9C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{160791DA-D78A-41B0-9854-36951959F9C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{160791DA-D78A-41B0-9854-36951959F9C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{160791DA-D78A-41B0-9854-36951959F9C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FA5EAB4-AACE-4C35-8861-2A7FE316ECDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FA5EAB4-AACE-4C35-8861-2A7FE316ECDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FA5EAB4-AACE-4C35-8861-2A7FE316ECDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FA5EAB4-AACE-4C35-8861-2A7FE316ECDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8922D8DD-FF48-4DEF-8744-3D6BC7D45C03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8922D8DD-FF48-4DEF-8744-3D6BC7D45C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8922D8DD-FF48-4DEF-8744-3D6BC7D45C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8922D8DD-FF48-4DEF-8744-3D6BC7D45C03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9058A3DC-0CF8-43A7-852E-D798762406ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9058A3DC-0CF8-43A7-852E-D798762406ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9058A3DC-0CF8-43A7-852E-D798762406ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9058A3DC-0CF8-43A7-852E-D798762406ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2C30F70-AA21-4AA0-8D32-AC3C5CC02426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2C30F70-AA21-4AA0-8D32-AC3C5CC02426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2C30F70-AA21-4AA0-8D32-AC3C5CC02426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2C30F70-AA21-4AA0-8D32-AC3C5CC02426}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{160791DA-D78A-41B0-9854-36951959F9C4} = {04C33CA1-1897-44FD-A023-7417CE24E876}
+		{3FA5EAB4-AACE-4C35-8861-2A7FE316ECDD} = {04C33CA1-1897-44FD-A023-7417CE24E876}
+		{8922D8DD-FF48-4DEF-8744-3D6BC7D45C03} = {04C33CA1-1897-44FD-A023-7417CE24E876}
+		{9058A3DC-0CF8-43A7-852E-D798762406ED} = {04C33CA1-1897-44FD-A023-7417CE24E876}
+		{E2C30F70-AA21-4AA0-8D32-AC3C5CC02426} = {04C33CA1-1897-44FD-A023-7417CE24E876}
+	EndGlobalSection
+EndGlobal

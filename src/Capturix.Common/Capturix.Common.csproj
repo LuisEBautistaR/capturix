@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- UI-free code shared by the capturer and the editor: settings, log, .cpx format, IPC. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Capturix.Common</RootNamespace>
+  </PropertyGroup>
+
+</Project>

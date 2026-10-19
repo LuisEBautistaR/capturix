@@ -1,0 +1,19 @@
+<Project>
+  <!-- Every project builds into one folder so Capturix.exe can launch Capturix.Editor.exe next to it. -->
+  <PropertyGroup>
+    <OutputPath>$(MSBuildThisFileDirectory)artifacts\bin\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <!-- Version and publisher shown in file properties and in the installer (installer/Capturix.iss). -->
+  <PropertyGroup>
+    <Version>1.1.0</Version>
+    <Product>Capturix</Product>
+    <Company>ProtoHub</Company>
+    <Authors>Luis E. Bautista</Authors>
+    <Copyright>© 2026 Luis E. Bautista · protohub.digital</Copyright>
+    <!-- The app is in Spanish; skip the framework's translated messages for other languages. -->
+    <SatelliteResourceLanguages>es;en</SatelliteResourceLanguages>
+  </PropertyGroup>
+</Project>

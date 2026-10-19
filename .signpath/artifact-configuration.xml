@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Artifact configuration for the SignPath project "capturix" (slug of this configuration: "installer").
+  actions/upload-artifact sends a ZIP, so the root is <zip-file>. Inside it, the Inno Setup installer
+  is signed with Authenticode; its product name must be "Capturix", as SignPath Foundation requires.
+  Paste it in SignPath > Project > Artifact configurations and let its editor validate it.
+-->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <pe-file path="CapturixSetup-*.exe" product-name="Capturix">
+      <authenticode-sign />
+    </pe-file>
+  </zip-file>
+</artifact-configuration>

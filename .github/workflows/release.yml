@@ -1,0 +1,109 @@
+# Builds the Capturix installer from this repository's source, signs it through SignPath and
+# publishes it as a GitHub Release.
+#   - Push a tag vX.Y.Z (matching <Version> in Directory.Build.props) to release.
+#   - Run it by hand (workflow_dispatch) to only build and keep the installer as an artifact.
+# SignPath is used when the repository variable SIGNPATH_ORGANIZATION_ID and the secret
+# SIGNPATH_API_TOKEN exist; every signing request waits for manual approval in SignPath.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write   # create the release
+  actions: read     # let SignPath download the uploaded artifact
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      SIGN: ${{ startsWith(github.ref, 'refs/tags/v') && vars.SIGNPATH_ORGANIZATION_ID != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Check the tag matches the version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          [xml]$props = Get-Content Directory.Build.props
+          $version = ($props.Project.PropertyGroup | Where-Object { $_.Version } | Select-Object -First 1).Version
+          if ("v$version" -ne $env:GITHUB_REF_NAME) { throw "La etiqueta $env:GITHUB_REF_NAME no coincide con la versión $version de Directory.Build.props" }
+          "VERSION=$version" | Out-File $env:GITHUB_ENV -Append
+
+      - name: Build installer
+        shell: pwsh
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File installer/build-installer.ps1
+
+      - name: Upload unsigned installer
+        id: upload-unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturix-installer-unsigned
+          path: artifacts/installer/CapturixSetup-*.exe
+          if-no-files-found: error
+
+      - name: Sign with SignPath (waits for manual approval)
+        if: env.SIGN == 'true'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: 'capturix'
+          signing-policy-slug: 'release-signing'
+          artifact-configuration-slug: 'installer'
+          github-artifact-id: '${{ steps.upload-unsigned.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: 'signed'
+
+      - name: Collect release files
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          $source = if ($env:SIGN -eq 'true') { 'signed' } else { 'artifacts/installer' }
+          Get-ChildItem $source -Filter 'CapturixSetup-*.exe' | Copy-Item -Destination release
+          Get-ChildItem release -Filter '*.exe' | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)" | Set-Content "$($_.FullName).sha256" -Encoding ascii
+            "$($_.Name)  SHA-256 $hash"
+          }
+          if ($env:SIGN -eq 'true') {
+            Get-ChildItem release -Filter '*.exe' | ForEach-Object {
+              $sig = Get-AuthenticodeSignature $_.FullName
+              if ($sig.Status -ne 'Valid') { throw "La firma de $($_.Name) no es válida: $($sig.Status)" }
+              "Firmado por: $($sig.SignerCertificate.Subject)"
+            }
+          }
+
+      - name: Keep the build
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturix-release
+          path: release/*
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $files = Get-ChildItem release | ForEach-Object { $_.FullName }
+          $signed = if ($env:SIGN -eq 'true') { 'firmado con el certificado de SignPath Foundation' } else { 'sin firma digital todavía' }
+          $hash = (Get-Content (Get-ChildItem release -Filter '*.sha256' | Select-Object -First 1).FullName)
+          $fence = '```'
+          $notes = @(
+            "Capturix $env:VERSION para Windows 10 (1809) u 11 de 64 bits. Instalador $signed.",
+            '', 'SHA-256:', $fence, $hash, $fence, '',
+            'Descarga y novedades: https://protohub.digital/capturix/'
+          ) -join "`n"
+          gh release view $env:GITHUB_REF_NAME 2>$null
+          if ($LASTEXITCODE -eq 0) { gh release upload $env:GITHUB_REF_NAME @files --clobber }
+          else { gh release create $env:GITHUB_REF_NAME @files --title "Capturix $env:VERSION" --notes $notes }

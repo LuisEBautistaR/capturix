@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>Capturix</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1EA0FF"/><stop offset="1" stop-color="#5B3DF5"/></linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="url(#bg)"/>
+  <rect x="8" y="8" width="240" height="120" rx="56" fill="url(#shine)"/>
+  <g fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 100 V80 Q60 60 80 60 H100"/>
+    <path d="M156 60 H176 Q196 60 196 80 V100"/>
+    <path d="M196 156 V176 Q196 196 176 196 H156"/>
+    <path d="M100 196 H80 Q60 196 60 176 V156"/>
+  </g>
+  <path d="M150.6 105.4 A32 32 0 1 0 150.6 150.6" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="163" cy="128" r="10" fill="#FF5A5F"/>
+</svg>

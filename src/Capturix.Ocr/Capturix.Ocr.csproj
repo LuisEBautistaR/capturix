@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The only project that uses WinRT (Windows.Media.Ocr); targeting a Windows 10 SDK version
+       makes the build pull the Microsoft.Windows.SDK.NET.Ref projections from NuGet. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Capturix.Ocr</RootNamespace>
+  </PropertyGroup>
+
+</Project>

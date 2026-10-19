@@ -1,0 +1,156 @@
+<Window x:Class="Capturix.Editor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Capturix.Editor.Controls"
+        Title="Capturix — Editor" Width="1200" Height="800"
+        WindowStartupLocation="CenterScreen" AllowDrop="True"
+        PreviewKeyDown="Window_PreviewKeyDown" Drop="Window_Drop" Closing="Window_Closing">
+
+    <Window.Resources>
+        <Style x:Key="ToolButton" TargetType="RadioButton" BasedOn="{StaticResource {x:Static ToolBar.RadioButtonStyleKey}}">
+            <Setter Property="GroupName" Value="Tools" />
+            <Setter Property="Padding" Value="6,3" />
+            <Setter Property="FontSize" Value="13" />
+            <EventSetter Event="Checked" Handler="Tool_Checked" />
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+            <Setter Property="Padding" Value="6,3" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar Band="1" BandIndex="0">
+                <Button Content="Abrir" Click="Open_Click" ToolTip="Abrir imagen (Ctrl+O)" />
+                <Button Content="Guardar como…" Click="SaveAs_Click" ToolTip="Guardar con anotaciones (Ctrl+S)" />
+                <Button Content="Copiar" Click="Copy_Click" ToolTip="Copiar imagen con anotaciones (Ctrl+C)" />
+                <Button x:Name="ExtractTextButton" Content="Extraer texto" Click="ExtractText_Click"
+                        ToolTip="Reconocer el texto de toda la imagen (Ctrl+T). Para una zona, usa la herramienta Texto OCR (O)" />
+                <Separator />
+                <Button x:Name="UndoButton" Content="↶ Deshacer" Click="Undo_Click" ToolTip="Ctrl+Z" />
+                <Button x:Name="RedoButton" Content="↷ Rehacer" Click="Redo_Click" ToolTip="Ctrl+Y" />
+            </ToolBar>
+
+            <ToolBar Band="0" BandIndex="0">
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Select" Content="↖ Seleccionar" ToolTip="Seleccionar, mover y redimensionar (V)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Arrow" Content="➜ Flecha" ToolTip="Flecha (A) — Mayús: ángulos de 45°" IsChecked="True" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Line" Content="╱ Línea" ToolTip="Línea (L)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Rectangle" Content="▭ Rectángulo" ToolTip="Rectángulo (R) — Mayús: cuadrado" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Ellipse" Content="◯ Elipse" ToolTip="Elipse (E) — Mayús: círculo" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Text" Content="T Texto" ToolTip="Texto (T) — Enter confirma, Mayús+Enter nueva línea" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Highlight" Content="▮ Resaltar" ToolTip="Resaltador (H)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Pixelate" Content="▦ Pixelar" ToolTip="Ocultar información sensible (B)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Step" Content="① Paso" ToolTip="Pasos numerados (S)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Pen" Content="✎ Lápiz" ToolTip="Dibujo a mano alzada (P)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Crop" Content="⛶ Recortar" ToolTip="Recortar la imagen (C)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Ocr" Content="⌸ Texto OCR" ToolTip="Arrastra sobre una zona para leer su texto (O)" />
+                <RadioButton Style="{StaticResource ToolButton}" Tag="Stamp" Content="☺ Sello" ToolTip="Sello con emoji: clic para ponerlo, tiradores para cambiar el tamaño (M)" />
+            </ToolBar>
+
+            <ToolBar Band="1" BandIndex="1">
+                <TextBlock Text="Color" VerticalAlignment="Center" Margin="4,0,6,0" />
+                <StackPanel x:Name="Palette" Orientation="Horizontal" VerticalAlignment="Center" />
+                <TextBlock Text="Grosor" VerticalAlignment="Center" Margin="10,0,4,0" />
+                <Slider x:Name="ThicknessSlider" Minimum="1" Maximum="20" Value="4" Width="110"
+                        IsSnapToTickEnabled="True" TickFrequency="1" VerticalAlignment="Center"
+                        ValueChanged="Thickness_Changed" />
+                <TextBlock x:Name="ThicknessText" Text="4" Width="22" VerticalAlignment="Center" TextAlignment="Right" />
+            </ToolBar>
+
+            <ToolBar Band="1" BandIndex="2">
+                <TextBlock Text="Zoom" VerticalAlignment="Center" Margin="4,0,4,0" />
+                <Button Content="−" Click="ZoomOut_Click" ToolTip="Alejar (Ctrl+−)" />
+                <TextBlock x:Name="ZoomText" Width="52" TextAlignment="Center" VerticalAlignment="Center" />
+                <Button Content="+" Click="ZoomIn_Click" ToolTip="Acercar (Ctrl++)" />
+                <Button Content="Ajustar" Click="ZoomFit_Click" ToolTip="Ajustar a la ventana (Ctrl+0)" />
+                <Button Content="100 %" Click="Zoom100_Click" ToolTip="Tamaño real, 1 píxel = 1 píxel (Ctrl+1)" />
+            </ToolBar>
+
+            <ToolBar Band="1" BandIndex="3">
+                <Button x:Name="StampPickerButton" Click="StampPicker_Click" ToolTip="Elegir el emoji del sello (se aplica también al sello seleccionado)">
+                    <StackPanel Orientation="Horizontal">
+                        <Image x:Name="StampPickerImage" Width="20" Height="20" Margin="0,0,6,0" />
+                        <TextBlock Text="Sello ▾" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+
+            <ToolBar Band="1" BandIndex="4">
+                <Button x:Name="ThemeButton" Click="ThemeButton_Click"
+                        ToolTip="Tema: Sistema → Claro → Oscuro. Se recuerda y también lo usa la bandeja" />
+            </ToolBar>
+        </ToolBarTray>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock x:Name="StatusSize" />
+            <Separator />
+            <TextBlock x:Name="StatusPointer" MinWidth="90" />
+            <Separator />
+            <TextBlock x:Name="StatusSave" MinWidth="120" />
+            <Separator />
+            <TextBlock Text="Mayús: 45° / cuadrado · Supr: borrar · Flechas: mover · Ctrl+rueda: zoom" Foreground="{DynamicResource Theme.SubtleText}" />
+        </StatusBar>
+
+        <!-- Library tray: recent captures, newest first (click to open). -->
+        <Border DockPanel.Dock="Bottom" Background="{DynamicResource Theme.PanelAlt}" BorderBrush="{DynamicResource Theme.Border}" BorderThickness="0,1,0,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left" Width="104" Margin="10,8,6,8">
+                    <TextBlock Text="Biblioteca" FontWeight="SemiBold" />
+                    <TextBlock x:Name="LibraryLocation" Foreground="{DynamicResource Theme.Accent}" FontSize="11" Margin="0,2,0,0" />
+                    <TextBlock x:Name="LibraryCount" Foreground="{DynamicResource Theme.SubtleText}" FontSize="11" Margin="0,1,0,0" />
+                    <Button Content="Abrir carpeta" Click="OpenLibraryFolder_Click" Margin="0,6,0,0"
+                            HorizontalAlignment="Left" ToolTip="Abrir la carpeta de la biblioteca en el Explorador" />
+                </StackPanel>
+                <ListBox x:Name="LibraryList" Height="108" Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         VirtualizingPanel.IsVirtualizing="True" SelectionChanged="LibraryList_SelectionChanged">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Width="120" ToolTip="{Binding ToolTip}">
+                                <Grid Height="72" Background="{DynamicResource Theme.Thumbnail}">
+                                    <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                    <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3" Padding="4,1"
+                                            Background="#CC000000" CornerRadius="3">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Badge}" Value="">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Badge}" Foreground="White" FontSize="10" />
+                                    </Border>
+                                </Grid>
+                                <TextBlock Text="{Binding Label}" Foreground="{DynamicResource Theme.SubtleText}" FontSize="11"
+                                           HorizontalAlignment="Center" Margin="0,3,0,0" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <Grid Background="{DynamicResource Theme.Canvas}">
+            <ScrollViewer x:Name="Scroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                          PreviewMouseWheel="Scroller_PreviewMouseWheel" Focusable="False">
+                <Grid x:Name="Surface" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24">
+                    <Grid.LayoutTransform>
+                        <ScaleTransform x:Name="ZoomTransform" />
+                    </Grid.LayoutTransform>
+                    <controls:EditorCanvas x:Name="EditorView" />
+                    <Canvas x:Name="TextOverlay" />
+                </Grid>
+            </ScrollViewer>
+            <TextBlock x:Name="EmptyHint" IsHitTestVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="{DynamicResource Theme.SubtleText}" FontSize="16" TextAlignment="Center"
+                       Text="Abre una imagen (Ctrl+O), pégala (Ctrl+V) o arrástrala aquí" />
+        </Grid>
+    </DockPanel>
+</Window>
