@@ -6,8 +6,8 @@ Herramienta de captura de pantalla para Windows escrita desde cero en C# / .NET 
 anotaciones, grabación de vídeo y GIF, y lectura de texto con OCR. Un proyecto del laboratorio REA.
 
 **Descarga:** <https://protohub.digital/capturix/> o la sección *Releases* de este repositorio.
-Software libre con licencia [MIT](LICENSE). Política de firma de código:
-[Code signing policy](CODE_SIGNING_POLICY.md).
+Software libre con licencia [MIT](LICENSE). El instalador no lleva firma digital de código: comprueba
+el archivo con la huella SHA-256 que acompaña a cada versión.
 
 ## Estado
 
@@ -196,13 +196,9 @@ powershell -ExecutionPolicy Bypass -File installer\build-installer.ps1   # insta
 ```
 
 Las versiones publicadas las compila GitHub Actions (`.github/workflows/release.yml`) al subir una
-etiqueta `vX.Y.Z`: publica el código autocontenido, crea el instalador, lo envía a SignPath para
-firmarlo (con aprobación manual) y lo adjunta a una Release junto con su huella SHA-256. La
-configuración que espera SignPath está en `.signpath/artifact-configuration.xml`.
+etiqueta `vX.Y.Z`: publica el código autocontenido, crea el instalador y lo adjunta a una Release
+junto con su huella SHA-256.
 
 ## Licencia
 
 [MIT](LICENSE) © 2026 Luis E. Bautista.
-
-Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
-[SignPath Foundation](https://signpath.org/).
